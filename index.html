@@ -1,0 +1,75 @@
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Leaflet.js Maps Geolocation Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- <link rel="stylesheet" href="styles.css"> -->
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+        crossorigin=""/>
+
+         <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        crossorigin=""></script>
+
+        <style>
+            #map { height: 350px; }
+        </style>
+
+    </head>
+    <body>
+        <h1>Map User Location</h1>
+        <div id="map"></div>
+    </body>
+    <!-- L is Leaflet. 51.505 is latitude; -0.09 is longitude; 13 is zoom-->
+    <script>
+        var map = L.map('map')
+        map.setView([51.505, -0.09], 13); //51.505 is latitude; -0.09; 13 is initial zoom
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        navigator.geolocation.watchPosition(success, error); 
+        
+        let marker, circle, zoomed;
+
+        function success(pos) {
+            const lat = pos.coords.latitude;
+            const long = pos.coords.longitude;
+            const accuracy = pos.coords.accuracy;
+
+            if (marker) {
+                map.removeLayer(marker);
+                map.removeLayer(circle);
+            }
+
+            marker = L.marker([lat,long]).addTo(map);
+            circle = L.circle([lat,long], {radius: accuracy}).addTo(map);
+
+            if (!zoomed) {
+                zoomed = map.fitBounds(circle.getBounds());
+            }
+
+            map.setView([lat, long]);
+            
+        }
+
+        function error(err) {
+            if(err.code === 1) {
+                alert("Please allow access for geolocation uwu");
+            }
+            else {
+                alert("No location my dear");
+            }
+        }
+
+        
+    </script>
+
+</html>
